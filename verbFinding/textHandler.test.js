@@ -1,4 +1,4 @@
-//Test function in file textHandler.js through Jest
+//Test functions in file textHandler.js through Jest
 const {
     anglophy,
     germanophyNoSZ,
