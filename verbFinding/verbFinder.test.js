@@ -22,8 +22,10 @@ describe('Test helper functions to find verb', () => {
 
     test('Verify that a specific tense and person can be found', () => {
         expect(getPerson('lieben', 'FUTUR1', 2, 'S', 'HABEN', 'DATIVE')).toEqual(['wirst dir', 'lieben'])
+        expect(getPerson('gehen')).toEqual(['gehe'])
         expect(getPerson('heißen', 'PLUSQUAMPERFEKT', 2, 'S')).toEqual(['hattest', 'geheißen'])
         expect(getPerson('lieben', 'not a tense', 2, 'P', 'not an aux', 'not a case')).toEqual(['liebt'])
+        expect(getPerson('lieben', 'PERFEKT', 2, 'S', 'SEIN', 'DATIVE')).toEqual(['bist dir', 'geliebt'])
         expect(getPerson('zurueckkehren', 'PLUSQUAMPERFEKT', 1, 'S')).toEqual(['war', 'zurückgekehrt'])
         expect(() => {
             getPerson('notaverb', 'PRASENS', 1, 'P')

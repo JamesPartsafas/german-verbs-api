@@ -66,7 +66,7 @@ Unspecified tense will return present, aux is chosen automatically if not
 specified, verbCase is ignored unless it is ACCUSATIVE or DATIVE */
 const getPerson = (verb, tense, person, number, aux, verbCase) => {
     //Handle auxiliary verb issues
-    if (aux !== 'SEIN' || aux !== 'HABEN') {
+    if (aux !== 'SEIN' && aux !== 'HABEN') {
         if (verbNeedsAux(tense))
             aux = automaticAux(verb)
     }
@@ -82,8 +82,14 @@ const getPerson = (verb, tense, person, number, aux, verbCase) => {
     if (!(tenseExists(tense)))
         tense = 'PRASENS'
 
+    //Handle issues with person and number
+    if (!person || person < 1 || person > 3)
+        person = 1
+    if (number !=='P')
+        number = 'S'
+
     //return conjugation, but must check if verb exists with both types of conversion to germanic characters
-    verb = anglophy(verb)
+    verb = anglophy(verb)    
     try {
         return GermanVerbsLib.getConjugation(GermanVerbsDict, germanophyNoSZ(verb), tense, person, number, aux, isReflexive, verbCase)
     } catch (err1) {
