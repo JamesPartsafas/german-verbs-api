@@ -2,24 +2,41 @@
 user requests, which go through the verbs router in the routes
 folder. */
 const {
+    tenseExists,
+    verbNeedsAux,
+    automaticAux,
     getPerson,
     getAllPersons,
     getAllTenses
 } = require('../verbFinding/verbFinder')
 
 //This function will be used on get request to get all conjugations or all conjugations of a tense
-const conjugateFull = (req, res) => {
-    const {verb, tense, aux, verbCase} = req.query
+const conjugateFull = async (req, res) => {
+    let {verb, tense, aux, verbCase} = req.query
     if (!verb) {
         return res.status(400).json({success:false, message:'Verb must be passed as a query parameter when using GET methods'})
     }
+
+    if (aux !== 'SEIN' && aux !== 'HABEN') {
+        aux = automaticAux(verb)
+    }
+
+    let isReflexive = true
+    if (!(verbCase === 'ACCUSATIVE' || verbCase === 'DATIVE')) {
+        verbCase = null
+        isReflexive = false
+    }
+
+    if (!(tenseExists(tense))) 
+        tense = 'PRASENS'
+
     try {
         if (!tense) {
-            const output = getAllTenses(verb, aux, verbCase)
+            const output = await getAllTenses(verb, aux, verbCase, isReflexive)
             return res.status(200).json({success:true, data:output})
         }
         else {
-            const output = getAllPersons(verb, tense, aux, verbCase)
+            const output = await getAllPersons(verb, tense, aux, verbCase, isReflexive)
             return res.status(200).json({success:true, data:output})
         }
     } catch (err) {
@@ -27,42 +44,81 @@ const conjugateFull = (req, res) => {
     }
 }
 
-//This function will be used with post requests, when the user wants conjugation for one of the 6 people in a tense
-const conjugatePerson = (req, res) => {
-    const {verb, tense, person, number, aux, verbCase} = req.body
-
-    if (!verb) {
-        return res.status(400).json({success:false, message:'Verb must be passed as part of the body with a verb attribute'})
-    }
-    
-    const message = messageLogger(tense, person, number, aux, verbCase)
+const conjugatePerson = async (req, res) => {
+    const {verb, tense, person, number, aux, verbCase, isReflexive, message} = req.body
 
     try {
-        const output = getPerson(verb, tense, person, number, aux, verbCase)
+        const output = await getPerson(verb, tense, person, number, aux, verbCase, isReflexive)
         return res.status(200).json({success:true, message:message, data:output})
     } catch (err) {
-        message.push('Verb could not be found')
+        message.unshift('Verb could not be found')
         return res.status(404).json({success:false, message:message})
     }
     
 }
 
-const messageLogger = (tense, person, number, aux, verbCase) => {
+const errorHandler = async (req, res, next) => {
+
+    if (!req.body.verb) {
+        return res.status(400).json({success:false, message:'Verb must be passed as part of the body with a verb attribute'})
+    }
+
+    var hasTense = hasAux = hasVerbCase = hasPerson = hasNumber = true // These variables are used for error messages in response
+    
+    //Handle auxiliary verb issues
+    if (req.body.aux !== 'SEIN' && req.body.aux !== 'HABEN') {
+        hasAux = false
+        if (verbNeedsAux(req.body.tense))
+            req.body.aux = automaticAux(req.body.verb)
+    }
+    
+    //Handle verbCase issues if the passed one is not formatted properly
+    req.body.isReflexive = true
+    if (!(req.body.verbCase === 'ACCUSATIVE' || req.body.verbCase === 'DATIVE')) {
+        hasVerbCase = false
+        req.body.verbCase = null
+        req.body.isReflexive = false
+    }
+    
+    //If there is an issue with the tense, default to present tense
+    if (!(tenseExists(req.body.tense))) {
+        hasTense = false
+        req.body.tense = 'PRASENS'
+    }
+
+    //Handle issues with person and number
+    if (!req.body.person || req.body.person < 1 || req.body.person > 3) {
+        hasPerson = false
+        req.body.person = 1
+    }
+    if (req.body.number !=='P') {
+        hasNumber = false
+        req.body.number = 'S'
+    }
+    
+    req.body.message = messageLogger(hasTense, hasAux, hasVerbCase, hasPerson, hasNumber)
+    
+    next()
+}
+
+const messageLogger = (hasTense, hasAux, hasVerbCase, hasPerson, hasNumber) => {
+    
     let message = []
-    if (!tense)
+    if (!hasTense)
         message.push('No tense specified. Defaulting to PRASENS.')
-    if (!person)
+    if (!hasPerson)
         message.push('No person specified. Defaulting to singular.')
-    if (!number)
+    if (!hasNumber)
         message.push('No number specified. Defaulting to first person.')
-    if (!aux)
+    if (!hasAux)
         message.push('No auxiliary verb specified. Defaulting to a known one')
-    if (!verbCase)
+    if (!hasVerbCase)
         message.push('No case specified. Defaulting to a non-reflexive verb')
     return message
 }
 
 module.exports = {
     conjugateFull,
-    conjugatePerson
+    conjugatePerson,
+    errorHandler
 }

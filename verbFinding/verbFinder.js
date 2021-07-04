@@ -64,29 +64,7 @@ const automaticAux = (verb) => {
 /* Get conjugation of verb at specific tense and person.
 Unspecified tense will return present, aux is chosen automatically if not
 specified, verbCase is ignored unless it is ACCUSATIVE or DATIVE */
-const getPerson = (verb, tense, person, number, aux, verbCase) => {
-    //Handle auxiliary verb issues
-    if (aux !== 'SEIN' && aux !== 'HABEN') {
-        if (verbNeedsAux(tense))
-            aux = automaticAux(verb)
-    }
-
-    //Handle verbCase issues if the passed one is not formatted properly
-    let isReflexive = true
-    if (!(verbCase === 'ACCUSATIVE' || verbCase === 'DATIVE')) {
-        verbCase = null
-        isReflexive = false
-    }
-
-    //If there is an issue with the tense, default to present tense
-    if (!(tenseExists(tense)))
-        tense = 'PRASENS'
-
-    //Handle issues with person and number
-    if (!person || person < 1 || person > 3)
-        person = 1
-    if (number !=='P')
-        number = 'S'
+const getPerson = async (verb, tense, person, number, aux, verbCase, isReflexive) => {
 
     //return conjugation, but must check if verb exists with both types of conversion to germanic characters
     verb = anglophy(verb)    
@@ -104,28 +82,29 @@ const getPerson = (verb, tense, person, number, aux, verbCase) => {
 }
 
 //Creates object containg all conjugations for a given tense
-const getAllPersons = (verb, tense, aux, verbCase) => {
+const getAllPersons = async (verb, tense, aux, verbCase, isReflexive) => {
     let output = new Object()
-    output.S1 = getPerson(verb, tense, 1, 'S', aux, verbCase)
-    output.S2 = getPerson(verb, tense, 2, 'S', aux, verbCase)
-    output.S3 = getPerson(verb, tense, 3, 'S', aux, verbCase)
-    output.P1 = getPerson(verb, tense, 1, 'P', aux, verbCase)
-    output.P2 = getPerson(verb, tense, 2, 'P', aux, verbCase)
-    output.P3 = getPerson(verb, tense, 3, 'P', aux, verbCase)
+    output.S1 = await getPerson(verb, tense, 1, 'S', aux, verbCase, isReflexive)
+    output.S2 = await getPerson(verb, tense, 2, 'S', aux, verbCase, isReflexive)
+    output.S3 = await getPerson(verb, tense, 3, 'S', aux, verbCase, isReflexive)
+    output.P1 = await getPerson(verb, tense, 1, 'P', aux, verbCase, isReflexive)
+    output.P2 = await getPerson(verb, tense, 2, 'P', aux, verbCase, isReflexive)
+    output.P3 = await getPerson(verb, tense, 3, 'P', aux, verbCase, isReflexive)
     return output
 }
 
 //Get all persons in all tenses
-const getAllTenses = (verb, aux, verbCase) => {
+const getAllTenses = async (verb, aux, verbCase, isReflexive) => {
     let output = new Object()
-    tenses.map((tense) => {
-        output[tense] = getAllPersons(verb, tense, aux, verbCase)
-    })
+    await Promise.all(tenses.map(async (tense) => {
+        output[tense] = await getAllPersons(verb, tense, aux, verbCase, isReflexive)
+    }))
     return output
 }
 
 //Exports
 module.exports = {
+    tenseExists,
     verbNeedsAux,
     automaticAux,
     getPerson,

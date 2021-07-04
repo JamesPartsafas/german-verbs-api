@@ -4,10 +4,11 @@ const router = express.Router()
 
 const {
     conjugateFull,
-    conjugatePerson
+    conjugatePerson,
+    errorHandler
 } = require('../controllers/verbs')
 
 router.get('/', conjugateFull)
-router.post('/', conjugatePerson)
+router.post('/', errorHandler, conjugatePerson)
 
 module.exports = router

@@ -12,10 +12,16 @@ app.use(express.json())
 //Have an app.use for logging middleware here
 app.use('/german-verbs-api', verbsRouter)
 
-
-app.listen(port, (err) => {
-    if (err)
-        console.log("Something went wrong. Details are shown below: ", error)
-    else
-        console.log('Server is listening on port', port)
+app.get('/test', (req, res) => {
+    res.status(200).json({'hello': 'world'})
 })
+
+app.listen(port, () => {
+    console.log('Server is listening on port', port)
+})
+.on('error', (err) => {
+    console.log('There was an error starting the server.')
+    console.log(err)
+})
+
+module.exports = app

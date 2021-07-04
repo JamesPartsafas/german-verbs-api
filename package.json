@@ -25,6 +25,7 @@
     "german-verbs-dict": "^2.0.0"
   },
   "devDependencies": {
-    "jest": "^27.0.6"
+    "jest": "^27.0.6",
+    "node-mocks-http": "^1.10.1"
   }
 }
