@@ -4,18 +4,17 @@ folder for details on methods called by any given request */
 const express = require('express')
 const app = express()
 const verbsRouter = require('./routes/verbs')
+const logRequest = require('./controllers/logger')
 const port = 5000
 
+//Middleware
 app.use(express.urlencoded({extended: false}))
 app.use(express.json())
 
-//Have an app.use for logging middleware here
+app.use('/german-verbs-api', logRequest)
 app.use('/german-verbs-api', verbsRouter)
 
-app.get('/test', (req, res) => {
-    res.status(200).json({'hello': 'world'})
-})
-
+//Create server
 app.listen(port, () => {
     console.log('Server is listening on port', port)
 })
