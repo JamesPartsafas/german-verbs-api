@@ -102,6 +102,24 @@ const getAllTenses = async (verb, aux, verbCase, isReflexive) => {
     return output
 }
 
+//Get all persons in array of tenses
+const getArrayTenses = async (verb, tenseArray, aux, verbCase, isReflexive) => {
+    
+    if (!Array.isArray(tenseArray) || tenseArray.length == 0)
+        throw new Error('The passed array of tenses is empty or not an array')
+
+    tenseArray.map((tense) => {
+        if (!tenseExists(tense))
+            throw new Error(`${tense} is not a valid tense`)
+    })
+
+    let output = new Object()
+    await Promise.all(tenseArray.map(async (tense) => {
+        output[tense] = await getAllPersons(verb, tense, aux, verbCase, isReflexive)
+    }))
+    return output
+}
+
 //Exports
 module.exports = {
     tenseExists,
@@ -109,5 +127,6 @@ module.exports = {
     automaticAux,
     getPerson,
     getAllPersons,
-    getAllTenses
+    getAllTenses,
+    getArrayTenses
 }

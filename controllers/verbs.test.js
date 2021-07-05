@@ -11,6 +11,7 @@ describe("Test full verb finding", () => {
             })
 
             const response = httpMocks.createResponse()
+            routeHandler(request, response)
 
             const {success, data} = JSON.parse(response._getData())
             expect(success).toBe(true)
@@ -113,5 +114,84 @@ describe("Test finding of full tense", () => {
 })
 
 describe("Test finding of specific person", () => {
-    
+    const validBody = {
+        "verb": "heissen",
+        "tense": "PERFEKT",
+        "number": "S",
+        "person": 2,
+        "aux": "SEIN",
+        "verbCase": "DATIVE"
+    }
+    const validData = ["bist dir", "geheißen"]
+    const validMessage = []
+
+    const missingDataBody = {
+        "verb": "heissen",
+        "tense": "PERFEKT",
+        "aux": "SEIN",
+        "verbCase": "DATIVE"
+    }
+    const missingData = ["bin mir", "geheißen"]
+    const missingDataMessage = ["No person specified. Defaulting to singular.","No number specified. Defaulting to first person."]
+
+    test('Verify search with all parameters valid', async () => {
+        () => {
+            const request = httpMocks.createRequest({
+                method: 'POST',
+                url: '/german-verbs-api',
+                body: validBody
+            })
+
+            const response = httpMocks.createResponse()
+
+            const {success, data, message} = JSON.parse(response._getData())
+            expect(success).toBe(true)
+            expect(data).toEqual(validData)
+            expect(message).toEqual(validMessage)
+        }
+    })
+
+    test('Verify search with missing person and number', async () => {
+        () => {
+            const request = httpMocks.createRequest({
+                method: 'POST',
+                url: '/german-verbs-api',
+                body: missingDataBody
+            })
+
+            const response = httpMocks.createResponse()
+
+            const {success, data, message} = JSON.parse(response._getData())
+            expect(success).toBe(true)
+            expect(data).toEqual(missingData)
+            expect(message).toEqual(missingDataMessage)
+        }
+    })
+})
+
+describe('Test the user passing an array of tenses', () => {
+
+    const validDataBody = {
+        "verb": "heissen",
+        "tense": ["PRASENS", "PERFEKT"],
+        "aux": "SEIN",
+        "verbCase": "DATIVE"
+    }
+    const validDataResponse = {"PRASENS":{"S1":["gehe"],"S2":["gehst"],"S3":["geht"],"P1":["gehen"],"P2":["geht"],"P3":["gehen"]},"PRATERITUM":{"S1":["ging"],"S2":["gingst"],"S3":["ging"],"P1":["gingen"],"P2":["gingt"],"P3": ["gingen"]}}
+    test('Verify search with valid array', async () => {
+        () => {
+            const request = httpMocks.createRequest({
+                method: 'POST',
+                url: '/german-verbs-api',
+                body: validDataBody
+            })
+
+            const response = httpMocks.createResponse()
+
+            const {success, data, message} = JSON.parse(response._getData())
+            expect(success).toBe(true)
+            expect(data).toEqual(validDataResponse)
+            expect(message).toEqual([])
+        }
+    })
 })

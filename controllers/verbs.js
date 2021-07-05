@@ -7,7 +7,8 @@ const {
     automaticAux,
     getPerson,
     getAllPersons,
-    getAllTenses
+    getAllTenses,
+    getArrayTenses
 } = require('../verbFinding/verbFinder')
 
 //This function will be used on get request to get all conjugations or all conjugations of a tense
@@ -40,10 +41,11 @@ const conjugateFull = async (req, res) => {
             return res.status(200).json({success:true, data:output})
         }
     } catch (err) {
-        return res.status(404).json({success:false, message:'Verb could not be found'})
+        return res.status(404).json({success:false, message:err.message})
     }
 }
 
+//This function will be used on post requests to handle conjugations of an individual person from a tense
 const conjugatePerson = async (req, res) => {
     const {verb, tense, person, number, aux, verbCase, isReflexive, message} = req.body
 
@@ -51,7 +53,7 @@ const conjugatePerson = async (req, res) => {
         const output = await getPerson(verb, tense, person, number, aux, verbCase, isReflexive)
         return res.status(200).json({success:true, message:message, data:output})
     } catch (err) {
-        message.unshift('Verb could not be found')
+        message.unshift(err.message)
         return res.status(404).json({success:false, message:message})
     }
     
@@ -91,14 +93,15 @@ const errorHandler = async (req, res, next) => {
         hasPerson = false
         req.body.person = 1
     }
-    if (req.body.number !=='P') {
+    if (req.body.number !=='P' && req.body.number !== 'S') {
         hasNumber = false
         req.body.number = 'S'
     }
     
     req.body.message = messageLogger(hasTense, hasAux, hasVerbCase, hasPerson, hasNumber)
     
-    next()
+    if (typeof next === "function") //Avoid issues if next is not defined
+        next()
 }
 
 const messageLogger = (hasTense, hasAux, hasVerbCase, hasPerson, hasNumber) => {
@@ -117,8 +120,32 @@ const messageLogger = (hasTense, hasAux, hasVerbCase, hasPerson, hasNumber) => {
     return message
 }
 
+//Allow user to pass array of tenses as post request and receive all conjugations of the selected verb
+const conjugateArray = async (req, res) => {
+
+    //Avoid returning error messages relating to not having passed person and number
+    req.body.person = 1
+    req.body.number = 'S'
+    req.body.tense = 'PRASENS'
+
+    //await errorHandler(req, res)
+
+    let {verb, tenseArray, aux, verbCase, isReflexive, message} = req.body
+    if (!message)
+        message = []
+        
+    try {
+        const output = await getArrayTenses(verb, tenseArray, aux, verbCase, isReflexive)
+        return res.status(200).json({success:true, message:message, data:output})
+    } catch (err) {
+        message.unshift(err.message)
+        return res.status(404).json({success:false, message:message})
+    }
+}
+
 module.exports = {
     conjugateFull,
     conjugatePerson,
-    errorHandler
+    errorHandler,
+    conjugateArray
 }

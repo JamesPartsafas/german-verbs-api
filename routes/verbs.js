@@ -5,10 +5,12 @@ const router = express.Router()
 const {
     conjugateFull,
     conjugatePerson,
-    errorHandler
+    errorHandler,
+    conjugateArray
 } = require('../controllers/verbs')
 
 router.get('/', conjugateFull)
 router.post('/', errorHandler, conjugatePerson)
+router.post('/tense-array', conjugateArray)
 
 module.exports = router
