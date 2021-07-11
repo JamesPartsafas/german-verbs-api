@@ -10,7 +10,9 @@ const port = process.env.PORT
 
 //Middleware
 app.use(express.urlencoded({extended: false}))
-app.use(express.json())
+app.use(express.json({
+    type: "*/*"
+}))
 
 app.use('/german-verbs-api', logRequest)
 app.use('/german-verbs-api', verbsRouter)

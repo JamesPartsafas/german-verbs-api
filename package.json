@@ -4,8 +4,8 @@
   "description": "This repository contains a web API that distributes German verb conjugations from HTTP requests.",
   "main": "app.js",
   "scripts": {
-    "start": "nodemon app.js",
-    "start-without-nodemon": "node app.js",
+    "start": "node app.js",
+    "start-with-nodemon": "nodemon app.js",
     "test-simple": "jest",
     "test": "jest --coverage"
   },
