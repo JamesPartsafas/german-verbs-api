@@ -84,12 +84,19 @@ const getPerson = async (verb, tense, person, number, aux, verbCase, isReflexive
 //Creates object containg all conjugations for a given tense
 const getAllPersons = async (verb, tense, aux, verbCase, isReflexive) => {
     let output = new Object()
-    output.S1 = await getPerson(verb, tense, 1, 'S', aux, verbCase, isReflexive)
-    output.S2 = await getPerson(verb, tense, 2, 'S', aux, verbCase, isReflexive)
-    output.S3 = await getPerson(verb, tense, 3, 'S', aux, verbCase, isReflexive)
-    output.P1 = await getPerson(verb, tense, 1, 'P', aux, verbCase, isReflexive)
-    output.P2 = await getPerson(verb, tense, 2, 'P', aux, verbCase, isReflexive)
-    output.P3 = await getPerson(verb, tense, 3, 'P', aux, verbCase, isReflexive)
+    let S1 = getPerson(verb, tense, 1, 'S', aux, verbCase, isReflexive)
+    let S2 = getPerson(verb, tense, 2, 'S', aux, verbCase, isReflexive)
+    let S3 = getPerson(verb, tense, 3, 'S', aux, verbCase, isReflexive)
+    let P1 = getPerson(verb, tense, 1, 'P', aux, verbCase, isReflexive)
+    let P2 = getPerson(verb, tense, 2, 'P', aux, verbCase, isReflexive)
+    let P3 = getPerson(verb, tense, 3, 'P', aux, verbCase, isReflexive)
+    const arr = await Promise.all([S1,S2,S3,P1,P2,P3])
+    output.S1 = arr[0]
+    output.S2 = arr[1]
+    output.S3 = arr[2]
+    output.P1 = arr[3]
+    output.P2 = arr[4]
+    output.P3 = arr[5]
     return output
 }
 
