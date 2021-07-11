@@ -28,7 +28,7 @@ const conjugateFull = async (req, res) => {
         isReflexive = false
     }
 
-    if (!(tenseExists(tense))) 
+    if (tense && !(tenseExists(tense))) 
         tense = 'PRASENS'
 
     try {
@@ -123,12 +123,16 @@ const messageLogger = (hasTense, hasAux, hasVerbCase, hasPerson, hasNumber) => {
 //Allow user to pass array of tenses as post request and receive all conjugations of the selected verb
 const conjugateArray = async (req, res) => {
 
+    if (!req.body.verb) {
+        return res.status(400).json({success:false, message:'Verb must be passed as part of the body with a verb attribute'})
+    }
+
     //Avoid returning error messages relating to not having passed person and number
     req.body.person = 1
     req.body.number = 'S'
     req.body.tense = 'PRASENS'
 
-    //await errorHandler(req, res)
+    await errorHandler(req, res)
 
     let {verb, tenseArray, aux, verbCase, isReflexive, message} = req.body
     if (!message)

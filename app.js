@@ -5,7 +5,8 @@ const express = require('express')
 const app = express()
 const verbsRouter = require('./routes/verbs')
 const logRequest = require('./controllers/logger')
-const port = 5000
+require('dotenv').config()
+const port = process.env.PORT
 
 //Middleware
 app.use(express.urlencoded({extended: false}))
