@@ -6,8 +6,8 @@ This repository contains a REST API that distributes German verb conjugations fr
 * [Usage](#usage)
     * [Array of Tenses](#subset-of-tenses)
     * [Specific Conjugation](#specific-conjugations)
-    * [Supported Verb Tenses](supported-verb-tenses)
-    * [Special Character Handling](special-character-handling)
+    * [Supported Verb Tenses](#supported-verb-tenses)
+    * [Special Character Handling](#special-character-handling)
 
 ## Local Development Setup
 Simply clone this repository to your system and run `npm install` in order to install all dependencies. You can then run `npm start` or `npm run start-with-nodemon` to open a local testing server. Unit tests can be run from `npm test`, to ensure no new errors have been introduced. Refer to the package.json file for all other available scripts.
