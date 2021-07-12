@@ -10,7 +10,7 @@ This repository contains a REST API that distributes German verb conjugations fr
     * [Special Character Handling](#special-character-handling)
 
 ## Local Development Setup
-Simply clone this repository to your system and run `npm install` in order to install all dependencies. You can then run `npm start` or `npm run start-with-nodemon` to open a local testing server. Unit tests can be run from `npm test`, to ensure no new errors have been introduced. Refer to the package.json file for all other available scripts.
+Simply clone this repository to your system and run `npm install` in order to install all dependencies. With a .env file containing your choice of PORT, you can then run `npm start` or `npm run start-with-nodemon` to open a local testing server. Unit tests can be run from `npm test`, to ensure no new errors have been introduced. Refer to the package.json file for all other available scripts.
 
 ## Usage
 In order to use this API in your project, GET requests may be used with the desired verb as a query parameter, as well as additional optional specifications. Omitting the optional parameters will return the verb conjugated non-reflexively to all tenses, with a default auxiliary verb where applicable. An example is shown below:
