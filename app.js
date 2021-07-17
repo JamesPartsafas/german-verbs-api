@@ -3,6 +3,7 @@ controllers folder for HTTP function handling and logging procedures, and routes
 folder for details on methods called by any given request */
 const express = require('express')
 const app = express()
+const apicache = require('apicache')
 const verbsRouter = require('./routes/verbs')
 const logRequest = require('./controllers/logger')
 require('dotenv').config()
@@ -13,6 +14,9 @@ app.use(express.urlencoded({extended: false}))
 app.use(express.json({
     type: "*/*"
 }))
+
+const onlyStatus200 = (req, res) => res.statusCode === 200
+app.use(apicache.middleware('10 minutes', onlyStatus200))
 
 app.use('/german-verbs-api', logRequest)
 app.use('/german-verbs-api', verbsRouter)

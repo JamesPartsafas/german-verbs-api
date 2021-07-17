@@ -11,6 +11,20 @@ const {
     getArrayTenses
 } = require('../verbFinding/verbFinder')
 
+//This function will be used on post requests to handle conjugations of an individual person from a tense
+const conjugatePerson = async (req, res) => {
+    const {verb, tense, person, number, aux, verbCase, isReflexive, message} = req.body
+
+    try {
+        const output = await getPerson(verb, tense, person, number, aux, verbCase, isReflexive)
+        return res.status(200).json({success:true, message:message, data:output})
+    } catch (err) {
+        message.unshift(err.message)
+        return res.status(404).json({success:false, message:message})
+    }
+    
+}
+
 //This function will be used on get request to get all conjugations or all conjugations of a tense
 const conjugateFull = async (req, res) => {
     let {verb, tense, aux, verbCase} = req.query
@@ -43,20 +57,6 @@ const conjugateFull = async (req, res) => {
     } catch (err) {
         return res.status(404).json({success:false, message:err.message})
     }
-}
-
-//This function will be used on post requests to handle conjugations of an individual person from a tense
-const conjugatePerson = async (req, res) => {
-    const {verb, tense, person, number, aux, verbCase, isReflexive, message} = req.body
-
-    try {
-        const output = await getPerson(verb, tense, person, number, aux, verbCase, isReflexive)
-        return res.status(200).json({success:true, message:message, data:output})
-    } catch (err) {
-        message.unshift(err.message)
-        return res.status(404).json({success:false, message:message})
-    }
-    
 }
 
 const errorHandler = async (req, res, next) => {
