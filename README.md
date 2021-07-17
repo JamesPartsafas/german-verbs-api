@@ -1,5 +1,5 @@
 # German Verb Conjugation API
-This repository contains a REST API that distributes German verb conjugations from HTTP requests for the 8000 most common verbs in the language. It is built with Node.js and Express.js, with unit testing implemented through Jest.
+This repository contains a REST API that distributes German verb conjugations from HTTP requests for the 8000 most common verbs in the language. It is built with Node.js and Express.js, with unit testing implemented through Jest and caching capabilities through Apicache.
 
 ## Table of Contents
 * [Setup](#local-development-setup)
