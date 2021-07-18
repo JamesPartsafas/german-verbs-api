@@ -21,6 +21,7 @@
   "homepage": "https://github.com/JamesPartsafas/german-verbs-api#readme",
   "dependencies": {
     "apicache": "^1.6.2",
+    "cors": "^2.8.5",
     "express": "^4.17.1",
     "german-verbs": "^4.0.0",
     "german-verbs-dict": "^2.0.0"
