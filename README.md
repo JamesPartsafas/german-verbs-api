@@ -14,7 +14,7 @@ Simply clone this repository to your system and run `npm install` in order to in
 
 ## Usage
 In order to use this API in your project, GET requests may be used with the desired verb as a query parameter, as well as additional optional specifications. Omitting the optional parameters will return the verb conjugated non-reflexively to all tenses, with a default auxiliary verb where applicable. An example is shown below:
-> http<area>s://german-verbs-conjugation-api.herokuapp.com/german-verbs-api?verb=gehen&tense=PERFEKT&aux=HABEN&verbCase=DATIVE
+> http<area>s://german-verbs-api.onrender.com/german-verbs-api?verb=gehen&tense=PERFEKT&aux=HABEN&verbCase=DATIVE
 
 Will return the following JSON response:
 
@@ -25,7 +25,7 @@ An omitted or non-existant verb parameter will return a 400 or 404 error code, r
 
 ### Subset of Tenses
 Additionally, POST requests may be used to specify a collection of tenses if a subset of conjugations are desired, with the desired tenses passed as an array (see below for valid tenses). As previously, the aux and verbCase values can be omitted, with defaults chosen as necessary. An example is shown:
->http<area>s://german-verbs-conjugation-api.herokuapp.com/german-verbs-api/tense-array
+>http<area>s://german-verbs-api.onrender.com/german-verbs-api/tense-array
 
 With the following request body:
 >{
@@ -40,7 +40,7 @@ Will return the following response:
 
 ### Specific Conjugations
 In a similar manner, conjugations of only a specific person at a specific tense can be requested, should a small response payload be desired.
->http<area>s://german-verbs-conjugation-api.herokuapp.com/german-verbs-api
+>http<area>s://german-verbs-api.onrender.com/german-verbs-api
 
 With the request body:
 >{
